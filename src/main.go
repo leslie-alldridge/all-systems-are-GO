@@ -59,7 +59,6 @@ func handleUrlMessage(w http.ResponseWriter, r *http.Request) {
 		json.NewEncoder(w).Encode(map[string]float64{"low": response.low, "healthy": response.healthy, "high": response.high})
 
 	}
-	// json.NewEncoder(w).Encode(map[string]string{"message": newmessage})
 }
 
 func healthCheck(w http.ResponseWriter, r *http.Request) {
