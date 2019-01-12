@@ -4,7 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"math/rand"
 	"net/http"
+
+	"github.com/gorilla/handlers"
 
 	"github.com/gorilla/mux"
 )
@@ -18,49 +21,21 @@ type Data struct {
 func main() {
 	var router = mux.NewRouter()
 	router.HandleFunc("/healthcheck", healthCheck).Methods("GET")
-	router.HandleFunc("/message", handleQryMessage).Methods("GET")
-	router.HandleFunc("/m/{msg}", handleUrlMessage).Methods("GET")
+
+	headersOk := handlers.AllowedHeaders([]string{"Authorization"})
+	originsOk := handlers.AllowedOrigins([]string{"*"})
+	methodsOk := handlers.AllowedMethods([]string{"GET", "POST", "OPTIONS"})
 
 	fmt.Println("Running server!")
-	log.Fatal(http.ListenAndServe(":4000", router))
-}
+	log.Fatal(http.ListenAndServe(":4000", handlers.CORS(originsOk, headersOk, methodsOk)(router)))
 
-func handleQryMessage(w http.ResponseWriter, r *http.Request) {
-	vars := r.URL.Query()
-	message := vars.Get("msg")
-
-	json.NewEncoder(w).Encode(map[string]string{"message": message})
-}
-
-func handleUrlMessage(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	message := vars["msg"]
-	if message == "latency" {
-		response := Data{low: 10, high: 10, healthy: 10}
-		fmt.Println(response)
-		json.NewEncoder(w).Encode(map[string]float64{"low": response.low, "healthy": response.healthy, "high": response.high})
-
-	}
-	if message == "traffic" {
-		response := Data{low: 650, high: 700, healthy: 650}
-		fmt.Println(response)
-		json.NewEncoder(w).Encode(map[string]float64{"low": response.low, "healthy": response.healthy, "high": response.high})
-
-	}
-	if message == "errors" {
-		response := Data{low: 0.9, high: 1.9, healthy: 1.2}
-		fmt.Println(response)
-		json.NewEncoder(w).Encode(map[string]float64{"low": response.low, "healthy": response.healthy, "high": response.high})
-
-	}
-	if message == "saturation" {
-		response := Data{low: 10, high: 50, healthy: 35}
-		fmt.Println(response)
-		json.NewEncoder(w).Encode(map[string]float64{"low": response.low, "healthy": response.healthy, "high": response.high})
-
-	}
 }
 
 func healthCheck(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode("Still alive!")
+	fmt.Println("I have provided you with the latest data")
+	latency := (rand.Float64() * 80) + 80
+	traffic := (rand.Float64() * 700) + 50
+	errors := (rand.Float64() * 5) + 1
+	saturation := (rand.Float64() * 70) + 15
+	json.NewEncoder(w).Encode(map[string]float64{"latency": latency, "traffic": traffic, "errors": errors, "saturation": saturation})
 }
