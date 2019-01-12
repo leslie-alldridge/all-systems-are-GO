@@ -23,7 +23,10 @@
 #   non-go = false
 #   go-tests = true
 #   unused-packages = true
-
+[metadata.heroku]
+  root-package = "leslie"
+  go-version = "go1.9.2"
+  install = [ "./..." ]
 
 [prune]
   go-tests = true
