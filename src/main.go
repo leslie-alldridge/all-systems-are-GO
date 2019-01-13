@@ -6,6 +6,7 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/handlers"
 
@@ -31,7 +32,8 @@ func main() {
 	originsOk := handlers.AllowedOrigins([]string{"*"})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "POST", "OPTIONS"})
 	fmt.Println("Running server!")
-	log.Fatal(http.ListenAndServe(":4000", handlers.CORS(originsOk, headersOk, methodsOk)(router)))
+	port := ":" + os.Getenv("PORT")
+	log.Fatal(http.ListenAndServe(port, handlers.CORS(originsOk, headersOk, methodsOk)(router)))
 }
 
 func healthCheck(w http.ResponseWriter, r *http.Request) {
