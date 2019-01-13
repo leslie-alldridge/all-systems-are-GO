@@ -9,8 +9,9 @@ import (
 	"math/rand"
 	"net/http"
 
+	"leslie/assets"
+
 	"github.com/gorilla/handlers"
-	"github.com/leslie/assets"
 
 	"github.com/gorilla/mux"
 )
