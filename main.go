@@ -1,23 +1,17 @@
 package main
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-	"html/template"
 	"log"
 	"math/rand"
 	"net/http"
-
-	"leslie/assets"
+	"os"
 
 	"github.com/gorilla/handlers"
 
 	"github.com/gorilla/mux"
 )
-
-var navigationBarHTML string
-var homepageTpl *template.Template
 
 type person struct {
 	name [][]string
@@ -27,14 +21,6 @@ type person struct {
 type release struct {
 	name   [][]string
 	detail [][]string
-}
-
-func init() {
-	navigationBarHTML = assets.MustAssetString("templates/navigation_bar.html")
-
-	homepageHTML := assets.MustAssetString("templates/index.html")
-	homepageTpl = template.Must(template.New("homepage_view").Parse(homepageHTML))
-
 }
 
 func main() {
@@ -49,8 +35,8 @@ func main() {
 	originsOk := handlers.AllowedOrigins([]string{"*"})
 	methodsOk := handlers.AllowedMethods([]string{"GET", "POST", "OPTIONS"})
 	fmt.Println("Running server!")
-	// port := ":" + os.Getenv("PORT")
-	log.Fatal(http.ListenAndServe(":4000", handlers.CORS(originsOk, headersOk, methodsOk)(router)))
+	port := ":" + os.Getenv("PORT")
+	log.Fatal(http.ListenAndServe(port, handlers.CORS(originsOk, headersOk, methodsOk)(router)))
 }
 
 func healthCheck(w http.ResponseWriter, r *http.Request) {
@@ -79,31 +65,7 @@ func roster(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(map[string][][]string{"roster": people["first person"].name, "roster2": people["second person"].name, "time2": people["second person"].time, "time1": people["first person"].time})
 }
 
-func render(w http.ResponseWriter, r *http.Request, tpl *template.Template, name string, data interface{}) {
-	buf := new(bytes.Buffer)
-	if err := tpl.ExecuteTemplate(buf, name, data); err != nil {
-		fmt.Printf("\nRender Error: %v\n", err)
-		return
-	}
-	w.Write(buf.Bytes())
-}
-
-func push(w http.ResponseWriter, resource string) {
-	pusher, ok := w.(http.Pusher)
-	if ok {
-		if err := pusher.Push(resource, nil); err == nil {
-			return
-		}
-	}
-}
-
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
-	push(w, "/static/style.css")
-	push(w, "/static/navigation_bar.css")
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	json.NewEncoder(w).Encode(map[string]string{"Welcome": "This is the Go Lang API"})
 
-	fullData := map[string]interface{}{
-		"NavigationBar": template.HTML(navigationBarHTML),
-	}
-	render(w, r, homepageTpl, "homepage_view", fullData)
 }
