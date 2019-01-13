@@ -23,10 +23,11 @@
 #   non-go = false
 #   go-tests = true
 #   unused-packages = true
+
 [metadata.heroku]
-  root-package = "main.go"
-  go-version = "go1.9.2"
-  install = [ "./..." ]
+  root-package = "github.com/mygithub/leslie"
+  go-version = "go1.9.3"
+  install = [ "." ]
 
 [prune]
   go-tests = true
