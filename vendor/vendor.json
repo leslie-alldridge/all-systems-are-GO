@@ -1,0 +1,17 @@
+{
+	"comment": "",
+	"ignore": "",
+	"package": [
+		{
+			"checksumSHA1": "OJpLgqqQOKM57HwZRPKFhNkVXJk=",
+			"path": "github.com/leslie",
+			"revision": ""
+		},
+		{
+			"checksumSHA1": "xnug0/HJ6Q3UOCHZIdAuqTjfQD0=",
+			"path": "github.com/leslie/assets",
+			"revision": ""
+		}
+	],
+	"rootPath": "github.com/leslie"
+}
